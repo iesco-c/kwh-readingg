@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+
+<title>Maaz Khan KWh Calculator</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 16px;
+    font-family: Inter, Arial, sans-serif;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(202,166,91,.16), transparent 28%),
+      radial-gradient(circle at 90% 90%, rgba(63,88,130,.18), transparent 30%),
+      linear-gradient(135deg, #07090e 0%, #111621 52%, #080a10 100%);
+    color: #f4f6fb;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 480px;
+    margin: auto;
+}
+
+.card {
+    background: rgba(18,22,32,.82);
+    padding: 22px;
+    border-radius: 20px;
+    box-shadow: 0 24px 70px rgba(0,0,0,.48);\n    border: 1px solid rgba(255,255,255,.09);\n    backdrop-filter: blur(18px);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 25px;
+}
+
+.header p {
+    color: #9aa3b4;
+    margin-top: 7px;
+    font-size: 13px;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    font-size: 14px;
+    margin: 12px 0 6px;
+}
+
+input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+}
+
+input:focus {
+    border-color: #d6b36a;
+}
+
+button {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    margin-top: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.calculate {
+    background: linear-gradient(135deg,#e0c27f,#a47b39);
+    color: #17130b;
+}
+
+.copy {
+    background: rgba(255,255,255,.07);
+    color: #f1f3f7;
+}
+
+.clear {
+    background: rgba(255,255,255,.045);
+    color: #b0b7c5;
+}
+
+.summary {
+    margin-top: 20px;
+    padding: 14px;
+    text-align: center;
+    background: rgba(255,255,255,.035);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+.tableBox {
+    overflow-x: auto;
+    margin-top: 12px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th, td {
+    padding: 10px 6px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+th {
+    background: rgba(255,255,255,.035);
+}
+
+.footer {
+    text-align: center;
+    margin-top: 18px;
+    color: #9aa3b4;
+    font-size: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+    <div class="header">
+        <h1>⚡ Maaz Khan</h1>
+        <p>KWh Reading Calculator</p>
+    </div>
+
+    <div class="row">
+
+        <div>
+            <label>Start KWh</label>
+            <input
+                type="number"
+                id="startKwh"
+                step="0.01"
+                placeholder="e.g. 252.82">
+        </div>
+
+        <div>
+            <label>End KWh</label>
+            <input
+                type="number"
+                id="endKwh"
+                step="0.01"
+                placeholder="e.g. 252.94">
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div>
+            <label>Start Ampere</label>
+            <input
+                type="number"
+                id="startAmp"
+                placeholder="e.g. 50">
+        </div>
+
+        <div>
+            <label>End Ampere</label>
+            <input
+                type="number"
+                id="endAmp"
+                placeholder="e.g. 40">
+        </div>
+
+    </div>
+
+    <label>Hours</label>
+
+    <input
+        type="number"
+        id="hours"
+        value="5"
+        min="1"
+        step="1">
+
+    <button class="calculate" onclick="calculate()">
+        Calculate Readings
+    </button>
+
+    <button class="copy" onclick="copyResult()">
+        Copy Result
+    </button>
+
+    <button class="clear" onclick="clearAll()">
+        Clear
+    </button>
+
+    <div id="result"></div>
+
+    <div class="footer">
+        Maaz Khan • KWh Reading Calculator
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let resultText = "";
+
+
+function calculate() {
+
+    let startKwh =
+        parseFloat(document.getElementById("startKwh").value);
+
+    let endKwh =
+        parseFloat(document.getElementById("endKwh").value);
+
+    let startAmp =
+        parseFloat(document.getElementById("startAmp").value);
+
+    let endAmp =
+        parseFloat(document.getElementById("endAmp").value);
+
+    let hours =
+        parseInt(document.getElementById("hours").value);
+
+
+    if (
+        isNaN(startKwh) ||
+        isNaN(endKwh) ||
+        isNaN(startAmp) ||
+        isNaN(endAmp) ||
+        isNaN(hours) ||
+        hours <= 0
+    ) {
+
+        alert("Please enter all values correctly.");
+
+        return;
+    }
+
+
+    if (endKwh < startKwh) {
+
+        alert("End KWh cannot be less than Start KWh.");
+
+        return;
+    }
+
+
+    let totalKwh = endKwh - startKwh;
+
+
+    let html = `
+
+        <div class="summary">
+            Total Difference:
+            ${totalKwh.toFixed(2)} KWh
+        </div>
+
+        <div class="tableBox">
+
+        <table>
+
+            <tr>
+                <th>Time</th>
+                <th>Ampere</th>
+                <th>KWh</th>
+            </tr>
+
+    `;
+
+
+    resultText =
+        "Maaz Khan KWh Calculator\n\n";
+
+
+    for (let i = 0; i <= hours; i++) {
+
+        let fraction = i / hours;
+
+
+        let kwh =
+            startKwh +
+            (totalKwh * fraction);
+
+
+        let amp =
+            startAmp +
+            ((endAmp - startAmp) * fraction);
+
+
+        let kwhValue =
+            kwh.toFixed(2);
+
+
+        let ampValue =
+            Math.round(amp);
+
+
+        html += `
+
+            <tr>
+
+                <td>${i} Hour</td>
+
+                <td>${ampValue} A</td>
+
+                <td>${kwhValue}</td>
+
+            </tr>
+
+        `;
+
+
+        resultText +=
+            `${i} Hour | ${ampValue} A | ${kwhValue} KWh\n`;
+    }
+
+
+    html += `
+
+        </table>
+
+        </div>
+
+    `;
+
+
+    resultText +=
+        `\nTotal Difference: ${totalKwh.toFixed(2)} KWh`;
+
+
+    document.getElementById("result").innerHTML =
+        html;
+}
+
+
+function copyResult() {
+
+    if (resultText === "") {
+
+        alert("First calculate the readings.");
+
+        return;
+    }
+
+
+    navigator.clipboard.writeText(resultText)
+
+        .then(function() {
+
+            alert("Result copied successfully.");
+
+        })
+
+        .catch(function() {
+
+            alert("Copy failed.");
+
+        });
+}
+
+
+function clearAll() {
+
+    document.getElementById("startKwh").value = "";
+
+    document.getElementById("endKwh").value = "";
+
+    document.getElementById("startAmp").value = "";
+
+    document.getElementById("endAmp").value = "";
+
+    document.getElementById("hours").value = "5";
+
+    document.getElementById("result").innerHTML = "";
+
+    resultText = "";
+}
+
+</script>
+
+</body>
+</html>
